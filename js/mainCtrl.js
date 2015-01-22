@@ -1,22 +1,56 @@
 var app = angular.module('chatroom');
 
 app.controller('mainCtrl', function($scope, parseService){
-  //In your controller you'll have a getParseData function and a postData function, but should be placed on $scope.
+  // setting starting feed to 'chat'
+ $scope.currentRoom = "main"
 
-  //The getParseData function will call the getData method on the parseService object. You'll then save the result of that request to 
-  //your controllers $scope as messages ($scope.messages)
-
-
-
-  //The postData function will take whatever the user typed in (hint: look at the html and see what ng-model correlates to on the input box),
-  //pass that text to the postData method on the parseService object which will then post it to the parse backend.
-
-
+  $scope.getParseData = function(roomName) {
+    parseService.getData($scope.currentRoom).then(function(res){
+      console.log(res)
+      $scope.messages = res.data.results;
+    })
+  }
 
 
-  //uncomment this code when your getParseData function is finished
+$scope.getParseData();
+
+  // pull list of rooms
+  $scope.getRooms = function() {
+    parseService.getRooms().then(function(res){
+      $scope.rooms = res
+    })
+  }
+
+  $scope.getRooms();
+
+   setInterval(function(){
+     $scope.getRooms();
+   }, 1500)
+
+
+  $scope.postData = function () {
+    parseService.postData($scope.currentRoom, $scope.message).then(function() {
+      $scope.getParseData();
+      $scope.message = "";
+    });
+  }
+
+  // Create a new endpoint
+  $scope.createRoom = function () {
+    console.log($scope.roomName);
+    parseService.createNewRoom($scope.roomName);
+  }
+
+  // This will switch the messages to the room your click on
+  $scope.switchRoom = function (room) {
+    console.log(room);
+    $scope.currentRoom = room;
+    $scope.getParseData($scope.currentRoom);
+  }
+
   //This goes and gets new data every second, which mimicking a chat room experience.
   // setInterval(function(){
-  //   $scope.getParseData();
+  //   $scope.getParseData($scope.currentRoom);
   // }, 1500)
+
 })

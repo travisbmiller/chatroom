@@ -6,13 +6,30 @@
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body ng-controller="mainCtrl">
+
+    <div class="rooms">
+        <ul>
+          <li ng-click="switchRoom('main')">Main Chat Room</li>
+          <li ng-repeat="room in rooms" ng-click="switchRoom(room.text)">{{ room.text }}</li>
+        </ul>
+      </div>
+
     <div class="main-container">
       <h1> DevMountain Chat Room </h1>
+      <form ng-submit="createRoom()">
+        <input class="form-control text-box" type="text" ng-model="roomName" placeholder="Name your room">
+      </form>
+
+
+
       <form ng-submit="postData()">
         <input class="form-control text-box" type="text" ng-model="message" placeholder="Message">
       </form>
+
+      <input class="form-control text-box" type="text" ng-model="searchFor" placeholder="Search for a Message">
+
       <div class="messages-container">
-        <p ng-repeat="message in messages"> {{message.text}} </p>
+        <p ng-repeat="message in messages | orderBy: createdAt:true |filter: searchFor"> {{ message.text }} {{ message.createdAt | date:'short' }}</p>
       </div>
     </div>
     <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.19.min.js"></script>
